@@ -6,3 +6,9 @@ An application solving a sudoku puzzle using a graph database as a data model.
 ```
 ./gradlew build
 ```
+
+## Running
+
+```
+./gradlew run
+```
