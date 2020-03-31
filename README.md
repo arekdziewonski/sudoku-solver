@@ -1,6 +1,12 @@
 # sudoku-solver
 An application solving a sudoku puzzle using a graph database as a data model.
 
+## Testing
+
+```
+./gradlew test -i
+```
+
 ## Building
 
 ```
@@ -10,5 +16,5 @@ An application solving a sudoku puzzle using a graph database as a data model.
 ## Running
 
 ```
-./gradlew run
+./gradlew run --args="<file-with-initial-grid>"
 ```
