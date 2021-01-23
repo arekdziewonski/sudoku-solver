@@ -10,6 +10,5 @@ fun main(args: Array<String>) {
     val grid = Grid(currentDir)
     grid.setContent(content)
 
-
     println("Sudoku solver")
 }

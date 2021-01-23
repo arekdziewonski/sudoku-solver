@@ -1,10 +1,8 @@
 package sudoku
 
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-
 
 internal class FileReaderTest {
     @Test
@@ -21,6 +19,5 @@ internal class FileReaderTest {
 
         val exception = assertThrows(RuntimeException::class.java) { FileReader(inputStream).contentAsSingleLine() }
         assertEquals("Grid must contain 9 rows", exception.message)
-
     }
 }

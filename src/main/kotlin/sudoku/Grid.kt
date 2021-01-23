@@ -5,7 +5,6 @@ import org.neo4j.dbms.api.DatabaseManagementServiceBuilder
 import org.neo4j.graphdb.RelationshipType
 import java.io.File
 
-
 class Grid(dbDirectory: File) {
     companion object RelType {
 
