@@ -34,7 +34,21 @@ class Grid(dbDirectory: File) {
 
     init {
         createIndexes()
+        createCells()
+    }
 
+    private fun createIndexes() {
+        val tx = graphDb.beginTx()
+        tx.use {
+            val schema = tx.schema()
+            schema.indexFor(label).on(CELL_ROW).create()
+            schema.indexFor(label).on(CELL_COL).create()
+            schema.indexFor(label).on(CELL_BOX).create()
+            tx.commit()
+        }
+    }
+
+    private fun createCells() {
         val tx = graphDb.beginTx()
         tx.use {
             var previousCell = tx.createNode()
@@ -55,17 +69,6 @@ class Grid(dbDirectory: File) {
     }
 
     private fun cellBox(row: Int, col: Int) = 3 * (row / 3) + col / 3
-
-    private fun createIndexes() {
-        val tx = graphDb.beginTx()
-        tx.use {
-            val schema = tx.schema()
-            schema.indexFor(label).on(CELL_ROW).create()
-            schema.indexFor(label).on(CELL_COL).create()
-            schema.indexFor(label).on(CELL_BOX).create()
-            tx.commit()
-        }
-    }
 
     fun setContent(content: String) {
         val tx = graphDb.beginTx()
