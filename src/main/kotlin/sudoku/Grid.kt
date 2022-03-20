@@ -101,9 +101,20 @@ class Grid(dbDirectory: Path) {
 
     private fun createAdjacentRelationship(tx: Transaction, from: Node, property: String, value: Any) {
         val nodes = tx.findNodes(label, property, value)
-        for (to in nodes) {
-            from.createRelationshipTo(to, adjacentRelType)
+        for (it in nodes) {
+            if (!from.equals(it) && !areAlreadyAdjacent(from, it)) {
+                from.createRelationshipTo(it, adjacentRelType)
+            }
         }
+    }
+
+    private fun areAlreadyAdjacent(cell1: Node, cell2: Node): Boolean {
+        for (rel in cell1.getRelationships(adjacentRelType)) {
+            if (rel.getOtherNode(cell1).equals(cell2)) {
+                return true
+            }
+        }
+        return false
     }
 
     fun setContent(content: String) {
