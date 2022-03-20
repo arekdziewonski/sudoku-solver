@@ -57,18 +57,27 @@ class Grid(dbDirectory: Path) {
     private fun createCells() {
         val tx = graphDb.beginTx()
         tx.use {
-            var previousCell = tx.createNode()
-            firstCellId = previousCell.getId()
-            for (i in 1..80) {
-                val newCell = tx.createNode(label)
+            var previousCell: Node? = null
+
+            for (i in 0..80) {
+                val cell = tx.createNode(label)
                 val row = i / 9
                 val col = i % 9
-                newCell.setProperty(CELL_ROW, row)
-                newCell.setProperty(CELL_COL, col)
-                newCell.setProperty(CELL_BOX, cellBox(row, col))
+                cell.setProperty(CELL_ROW, row)
+                cell.setProperty(CELL_COL, col)
+                cell.setProperty(CELL_BOX, cellBox(row, col))
 
-                previousCell.createRelationshipTo(newCell, nextRelType)
-                previousCell = newCell
+                if (previousCell != null) {
+
+                    // connect the previous cell to this one
+                    previousCell.createRelationshipTo(cell, nextRelType)
+                } else {
+
+                    // remember the first cell in order to traverse the graph again
+                    firstCellId = cell.getId()
+                }
+
+                previousCell = cell
             }
             tx.commit()
         }
