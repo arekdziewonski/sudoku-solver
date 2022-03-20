@@ -3,7 +3,9 @@ package sudoku
 import org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME
 import org.neo4j.dbms.api.DatabaseManagementServiceBuilder
 import org.neo4j.graphdb.Label
+import org.neo4j.graphdb.Node
 import org.neo4j.graphdb.RelationshipType
+import org.neo4j.graphdb.Transaction
 import java.nio.file.Path
 
 class Grid(dbDirectory: Path) {
@@ -14,6 +16,9 @@ class Grid(dbDirectory: Path) {
 
         // points to the next cell in the sequence
         val nextRelType: RelationshipType = RelationshipType.withName("next")
+
+        // points to an adjacent cell (adjacent cells can't have the same value)
+        val adjacentRelType: RelationshipType = RelationshipType.withName("adjacent")
 
         // value in the cell
         val CELL_VALUE = "value"
@@ -35,6 +40,7 @@ class Grid(dbDirectory: Path) {
     init {
         createIndexes()
         createCells()
+        createRelationships()
     }
 
     private fun createIndexes() {
@@ -69,6 +75,27 @@ class Grid(dbDirectory: Path) {
     }
 
     private fun cellBox(row: Int, col: Int) = 3 * (row / 3) + col / 3
+
+    private fun createRelationships() {
+        val tx = graphDb.beginTx()
+        tx.use {
+            val firstCell = tx.getNodeById(firstCellId)
+            val nodes = tx.traversalDescription().breadthFirst().relationships(nextRelType).traverse(firstCell).nodes()
+            for (cell in nodes) {
+                createAdjacentRelationship(tx, cell, CELL_ROW, cell.getProperty(CELL_ROW))
+                createAdjacentRelationship(tx, cell, CELL_COL, cell.getProperty(CELL_COL))
+                createAdjacentRelationship(tx, cell, CELL_BOX, cell.getProperty(CELL_BOX))
+            }
+            tx.commit()
+        }
+    }
+
+    private fun createAdjacentRelationship(tx: Transaction, from: Node, property: String, value: Any) {
+        val nodes = tx.findNodes(label, property, value)
+        for (to in nodes) {
+            from.createRelationshipTo(to, adjacentRelType)
+        }
+    }
 
     fun setContent(content: String) {
         val tx = graphDb.beginTx()
