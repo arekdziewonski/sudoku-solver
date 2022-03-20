@@ -13,6 +13,15 @@ class Grid(dbDirectory: File) {
 
         // value in the cell
         val CELL_VALUE = "value"
+
+        // row the cell is in
+        val CELL_ROW = "row"
+
+        // column the cell is in
+        val CELL_COL = "col"
+
+        // box the cell is in
+        val CELL_BOX = "box"
     }
 
     val managementService = DatabaseManagementServiceBuilder(dbDirectory).build()
@@ -26,12 +35,20 @@ class Grid(dbDirectory: File) {
             firstCellId = previousCell.getId()
             for (i in 1..80) {
                 val newCell = tx.createNode()
+                val row = i / 9
+                val col = i % 9
+                newCell.setProperty(CELL_ROW, row)
+                newCell.setProperty(CELL_COL, col)
+                newCell.setProperty(CELL_BOX, cellBox(row, col))
+
                 previousCell.createRelationshipTo(newCell, nextRelType)
                 previousCell = newCell
             }
             tx.commit()
         }
     }
+
+    private fun cellBox(row: Int, col: Int) = 3 * (row / 3) + col / 3
 
     fun setContent(content: String) {
         val tx = graphDb.beginTx()
