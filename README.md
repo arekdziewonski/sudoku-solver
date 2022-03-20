@@ -4,29 +4,29 @@ An application solving a sudoku puzzle using a graph database as a data model.
 ## Linting
 
 ```
-./gradlew lint
+gradle lint
 ```
 
 ## Formatting
 
 ```
-./gradlew format
+gradle format
 ```
 
 ## Testing
 
 ```
-./gradlew test -i
+gradle test -i
 ```
 
 ## Building
 
 ```
-./gradlew build
+gradle build
 ```
 
 ## Running
 
 ```
-./gradlew run --args="<file-with-initial-grid>"
+gradle run --args="<file-with-initial-grid>"
 ```
