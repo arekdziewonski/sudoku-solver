@@ -2,11 +2,15 @@ package sudoku
 
 import org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME
 import org.neo4j.dbms.api.DatabaseManagementServiceBuilder
+import org.neo4j.graphdb.Label
 import org.neo4j.graphdb.RelationshipType
 import java.io.File
 
 class Grid(dbDirectory: File) {
     companion object RelType {
+
+        // we're going to have just one type of cells
+        val label = Label.label("cell")
 
         // points to the next cell in the sequence
         val nextRelType: RelationshipType = RelationshipType.withName("next")
@@ -29,12 +33,14 @@ class Grid(dbDirectory: File) {
     var firstCellId: Long = 0
 
     init {
+        createIndexes()
+
         val tx = graphDb.beginTx()
         tx.use {
             var previousCell = tx.createNode()
             firstCellId = previousCell.getId()
             for (i in 1..80) {
-                val newCell = tx.createNode()
+                val newCell = tx.createNode(label)
                 val row = i / 9
                 val col = i % 9
                 newCell.setProperty(CELL_ROW, row)
@@ -49,6 +55,17 @@ class Grid(dbDirectory: File) {
     }
 
     private fun cellBox(row: Int, col: Int) = 3 * (row / 3) + col / 3
+
+    private fun createIndexes() {
+        val tx = graphDb.beginTx()
+        tx.use {
+            val schema = tx.schema()
+            schema.indexFor(label).on(CELL_ROW).create()
+            schema.indexFor(label).on(CELL_COL).create()
+            schema.indexFor(label).on(CELL_BOX).create()
+            tx.commit()
+        }
+    }
 
     fun setContent(content: String) {
         val tx = graphDb.beginTx()
