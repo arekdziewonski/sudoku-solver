@@ -9,7 +9,7 @@ fun main(args: Array<String>) {
         println("usage: SudokuSolver <file-with-initial-grid>")
         exitProcess(1)
     }
-    val currentDir = Paths.get("").toAbsolutePath().toFile()
+    val currentDir = Paths.get("").toAbsolutePath()
 
     val content = FileReader(FileInputStream(args[0])).contentAsSingleLine()
     val grid = Grid(currentDir)

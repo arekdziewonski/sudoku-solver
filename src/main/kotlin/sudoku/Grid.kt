@@ -4,9 +4,9 @@ import org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME
 import org.neo4j.dbms.api.DatabaseManagementServiceBuilder
 import org.neo4j.graphdb.Label
 import org.neo4j.graphdb.RelationshipType
-import java.io.File
+import java.nio.file.Path
 
-class Grid(dbDirectory: File) {
+class Grid(dbDirectory: Path) {
     companion object RelType {
 
         // we're going to have just one type of cells
