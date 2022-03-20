@@ -28,5 +28,6 @@ gradle build
 ## Running
 
 ```
+rm -rf data  # drop the database
 gradle run --args="<file-with-initial-grid>"
 ```
