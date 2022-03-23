@@ -16,4 +16,6 @@ fun main(args: Array<String>) {
     grid.setContent(content)
 
     println("Sudoku solver")
+    val solution = grid.getContent()
+    println(solution)
 }

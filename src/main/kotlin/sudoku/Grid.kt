@@ -130,4 +130,21 @@ class Grid(dbDirectory: Path) {
             tx.commit()
         }
     }
+
+    fun getContent(): String {
+        val sb = StringBuilder()
+        val tx = graphDb.beginTx()
+        tx.use {
+            val firstCell = tx.getNodeById(firstCellId)
+            val nodes = tx.traversalDescription().breadthFirst().relationships(nextRelType).traverse(firstCell).nodes()
+            for ((cell, i) in nodes.zip(0..80)) {
+                val value = cell.getProperty(CELL_VALUE, '.')
+                if (i % 9 == 0) {
+                    sb.append('\n')
+                }
+                sb.append(value)
+            }
+        }
+        return sb.toString()
+    }
 }
